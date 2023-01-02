@@ -1,0 +1,26 @@
+table {
+
+    color: steelblue;
+    text-align: center;
+    font-family: Tahoma serif;
+
+}
+
+td, th {
+
+    padding: 5px;
+
+}
+
+#doc-content *{
+
+    margin: 10px auto;
+
+}
+
+#title{
+
+    text-align: center;
+    margin-bottom: 30px;
+
+}
