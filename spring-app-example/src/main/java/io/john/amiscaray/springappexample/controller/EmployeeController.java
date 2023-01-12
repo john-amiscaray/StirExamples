@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.john.amiscaray.stir.util.ElementDescriptorProcessor.element;
 
 @RestController
 @AllArgsConstructor
@@ -29,16 +32,37 @@ public class EmployeeController {
             .map(Employee::toDTO)
             .collect(Collectors.toList());
 
+        LinkedHashMap<String, String> navMap = new LinkedHashMap<>();
+        navMap.put("Home", "#");
+        navMap.put("Employees", "#");
+        Nav nav = Nav.fromLabelHrefMap(navMap);
+        nav.setId("nav");
+
         return HTMLDocument.builder()
+                .format("""
+                <!DOCTYPE html>
+                <html lang="<& str_lang &>">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <& str_meta &>
+                        <title><& str_title &></title>
+                        <& str_hscripts &>
+                        <& str_lstyles &>
+                        <& str_styles &>
+                    </head>
+                    <body>
+                        <& nav str_content &>
+                        <& str_fscripts &>
+                    </body>
+                </html>""")
                 .element(Div.builder()
                         .id("doc-content")
                         .cssClass("container")
-                        .child(HGroup.builder()
-                                .id("title")
-                                .child(new Heading(1, "Employees"))
-                                .build())
+                        .child(element("hgroup#title{h1('Employees')}"))
                         .child(new Table(employees, EmployeeDTO.class))
                         .build())
+                .formatArg("nav", nav)
                 .withBootStrap(true)
                 .linkedStyle(new LinkedStyle("/styles.css"))
                 .build()
